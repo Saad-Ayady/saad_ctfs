@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CTF Writeup | 0xdy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-cover bg-fixed text-white" style="background-image: url('https://i.pinimg.com/736x/0b/4d/90/0b4d9081e8d9126effaf7c7052dd71e8.jpg');">
+
+  <div class="min-h-screen bg-black/70 backdrop-blur-md px-6 py-12 animate-fade-in">
+    <!-- Welcome Section -->
+    <div class="max-w-2xl mx-auto bg-white/5 border border-white/10 rounded-xl p-8 text-center shadow-xl animate-slide-up mb-10">
+      <h1 class="text-4xl font-bold text-cyan-400 mb-2">Welcome, I'm <span class="text-cyan-300">0xdy</span></h1>
+      <p class="text-gray-300 text-md">APT-Level Researcher | CTF Addict | Exploit Developer</p>
+    </div>
+
+    <!-- Title of CTF -->
+    <div class="max-w-2xl mx-auto text-center mb-8">
+      <h2 class="text-3xl font-semibold text-white mb-2">🚩 NahamCon CTF 2024</h2>
+      <p class="text-gray-300 text-sm">Write-up & full walkthrough on how I solved the challenge.</p>
+    </div>
+
+    <!-- Writeup Section -->
+    <div class="max-w-3xl mx-auto bg-white/5 border border-white/10 p-6 rounded-xl shadow-lg backdrop-blur-md animate-fade-in">
+      <!-- Step Description -->
+      <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+        The challenge started with reconnaissance. I scanned all ports using Nmap and found a web server running on port 8080. I proceeded with content enumeration using Gobuster.
+      </p>
+
+      <!-- Command Block -->
+      <div class="bg-black/80 text-green-400 font-mono text-sm p-4 rounded-md overflow-auto mb-4 border border-green-500">
+        nmap -sV -p- -T4 10.10.10.10<br>
+        gobuster dir -u http://10.10.10.10:8080 -w /usr/share/wordlists/dirb/common.txt
+      </div>
+
+      <!-- Screenshot 1 -->
+      <img src="./img/1.png" alt="Recon Screenshot" class="rounded-md border border-white/10 shadow-md mb-4">
+      
+      <div class="max-w-3xl mx-auto bg-white/5 border border-white/10 p-6 rounded-xl shadow-lg backdrop-blur-md mt-12 animate-fade-in">
+        <h3 class="text-2xl font-bold text-cyan-300 mb-6">❓ Challenge Questions & Flags</h3>
+      
+        <!-- Q1 -->
+        <div class="mb-6">
+          <h4 class="text-xl font-semibold text-white mb-2 border-b border-cyan-400 pb-1">🧩 What was the first flag?</h4>
+          <div class="bg-black/80 border border-green-500 text-green-400 font-mono text-sm p-3 rounded-md">
+            THM{j23jiju908238u2hhvciojwef}
+          </div>
+        </div>
+
+      <!-- More Description -->
+      <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+        After identifying an admin panel, I tested for SQL injection manually, and extracted user credentials from the database. Then I logged in and found a page with command injection.
+      </p>
+
+      <!-- Script Sample -->
+      <div class="bg-black/80 text-yellow-300 font-mono text-sm p-4 rounded-md overflow-auto mb-4 border border-yellow-500">
+<pre><code>#!/bin/bash
+curl -X POST http://10.10.10.10/admin --data "cmd=whoami"
+</code></pre>
+      </div>
+
+      <!-- Screenshot 2 -->
+      <img src="./img/2.png" alt="Command Injection Screenshot" class="rounded-md border border-white/10 shadow-md mb-4">
+
+      <!-- Final Note -->
+      <p class="text-gray-300 text-sm leading-relaxed">
+        I finally uploaded a reverse shell using `php-reverse-shell.php`, caught it with netcat, escalated privileges using a cronjob misconfiguration, and grabbed the flag from `/root/flag.txt`.
+      </p>
+    </div>
+
+    <footer class="mt-10 text-center text-sm text-gray-400">&copy; 2025 Saad Ayady | All Rights Reserved.</footer>
+  </div>
+
+  <!-- Animations -->
+  <style>
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fade-in 1.4s ease-in-out;
+    }
+    .animate-slide-up {
+      animation: slide-up 1.2s ease-in-out;
+    }
+  </style>
+
+</body>
+</html>
