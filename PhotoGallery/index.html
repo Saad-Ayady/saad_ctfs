@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Photo Gallery | H1 CTF Write-up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fade-in 1.4s ease-in-out;
+    }
+    .animate-slide-up {
+      animation: slide-up 1.2s ease-in-out;
+    }
+    span {
+      font-weight: bold;
+      color: #38bdf8;
+    }
+    /* Improved paragraph styling */
+    .content-paragraph {
+      @apply text-gray-300 text-[16px] leading-relaxed mb-6;
+      font-weight: 450;
+      letter-spacing: 0.01em;
+      max-width: 100%;
+    }
+    .content-paragraph strong {
+      @apply text-cyan-300 font-semibold;
+    }
+  </style>
+</head>
+<body class="relative font-[Inter] leading-relaxed" style="background-image: url('https://i.pinimg.com/1200x/95/e6/56/95e6567e5f9e9e91bff4525feac5ef23.jpg'); background-size: cover; background-attachment: fixed;">
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+    <div class="relative text-white">
+      <div class="max-w-2xl mx-auto bg-white/10 border border-white/20 rounded-xl p-8 shadow-xl animate-slide-up mb-10">
+        <h1 class="text-4xl font-bold text-cyan-400 mb-2">Welcome, I'm <span class="text-cyan-300">0xdy</span></h1>
+        <p class="content-paragraph">APT-Level Researcher | CTF Enthusiast | Exploit Developer</p>
+      </div>
+
+    <div class="max-w-2xl mx-auto mb-8 px-4">
+      <h2 class="text-3xl font-semibold text-white mb-2">🚩 Photo Gallery | HackerOne CTF</h2>
+      <p class="content-paragraph">Full write-up and walkthrough of how I solved this challenge.</p>
+      <p class="content-paragraph">In this write-up, I share my approach and how I think like a bug hunter.</p>
+    </div>
+
+    <div class="max-w-2xl mx-auto bg-white/10 border border-white/20 rounded-xl p-8 shadow-xl animate-slide-up mb-10 px-4">
+      <h1 class="text-2xl font-bold text-cyan-400 mb-6">Hey Hackers, today I solved this CTF!</h1>
+    <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHIwcHh4NXc5eHlhc2p5anc0MXg2dGE5a25oOWV2cWZrdHJzZzdvMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/137EaR4vAOCn1S/giphy.gif" alt="Normal Git" class="rounded-md border border-white/10 shadow-md mb-8">
+    <p class="content-paragraph">When you open the CTF, you just see a normal page.</p>
+    <img src="./img/1.png" alt="CTF Page" class="rounded-md border border-white/10 shadow-md mb-8">    
+    <p class="content-paragraph">If you open DevTools, you can see some files, or you can open some images from this page.</p>
+    <p class="content-paragraph">When you open an image, you'll notice a parameter like <span>?id=1</span>. You can think of 4 possible vulnerabilities here:</p>
+    <img src="./img/3.png" alt="CTF Page" class="rounded-md border border-white/10 shadow-md mb-8">
+    <ul class="list-disc list-inside text-gray-300 text-base mb-8 ml-6">
+      <li class="content-paragraph">SQL Injection: because this parameter might fetch data from the database.</li>
+      <li class="content-paragraph">DOM XSS: because the parameter might be reflected in HTML. For example, <span>&lt;img src='1'&gt;</span>, so you can test with <span>' onerror="alert(1)"</span>.</li>
+      <li class="content-paragraph">File Inclusion: because the parameter might fetch files, but this is unlikely.</li>
+      <li class="content-paragraph">IDOR: because the parameter might access private images or data, but this is also unlikely.</li>
+    </ul>
+
+    <p class="content-paragraph">I decided to test for SQL Injection using SQLMap.</p>
+    <p class="content-paragraph">I used this command:</p>
+    <div class="bg-black/80 text-yellow-300 font-mono text-sm p-4 rounded-md overflow-auto mb-8 border border-yellow-500">
+      <pre><code>sqlmap -u "URL/fetch?id=1" --dbs --threads 10</code></pre>
+    </div>
+    <p class="content-paragraph">After running this command, I confirmed the parameter is vulnerable to SQL Injection.</p>
+    <p class="content-paragraph">Next, I used another command to enumerate the databases:</p>
+    <img src="./img/5.png" alt="SQL Injection Result" class="rounded-md border border-white/10 shadow-md mb-8">
+    <p class="content-paragraph">Then, I listed the columns:</p>
+    <p class="content-paragraph">When I ran the command to view the columns, I found the FLAG!</p>
+    <img src="./img/6.png" alt="SQL Injection Columns" class="rounded-md border border-white/10 shadow-md mb-8">
+
+    <p class="content-paragraph">Finally, you can learn how to run commands on the server through an advanced SQL Injection technique. This can help you capture the remaining flags.</p>
+    <p class="content-paragraph">This is my thought process while solving this CTF:</p>
+    <img src="./img/7.png" alt="Solving All CTF" class="rounded-md border border-white/10 shadow-md mb-8">
+    <p class="content-paragraph">you still need to learn more about executing commands on the backend, because it's an advanced SQLI technique. Make sure to practice and study this method to solve similar challenges.</p>
+    <p class="content-paragraph">I hope you learned something useful from my write-up!</p>
+    <h2 class="text-2xl font-bold text-cyan-400 mt-8 mb-6">Happy Hacking, and thanks for reading!</h2>
+    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2Z0NWxpZ2g1eDZlMDE1bjlxMDI0NGticm12ZTFxeW5xOXR1Z3A2NyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/DAPhOSLQ06hN9Qtngj/giphy.gif" alt="Happy Hacking" class="rounded-md border border-white/10 shadow-md mb-8">
+    <p class="content-paragraph">If you have any questions or need further help, feel free to reach out!</p>
+    <p class="content-paragraph">Follow me on <a href="https://x.com/SaadAyady" class="text-cyan-400 hover:underline">Twitter</a> for more updates and content.</p>
+    </div>
+  </div>
+</body>
+</html>
